@@ -153,6 +153,7 @@ const ReserveEquipment = () => {
             <Box sx={{ padding: 3 , justifyContent: 'center',  width: '100%' }}>
               <ChangeUserButton />
               
+              
               <TextField
                 placeholder="🔎"
                 sx={{ marginTop:2, backgroundColor: 'white' ,  display: 'flex', justifyContent: 'center', width: '100%', borderRadius:2}}
@@ -180,100 +181,100 @@ const ReserveEquipment = () => {
                   {displayModel.map((item, index) => (
                     <Grid2 item xs={6} md={3} key={index}>
   
-<Card
-  sx={{
-    border: '0px solid black',
-    backgroundColor: theme.palette.primary.main,
-    width: '199px',
-    height: '199px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '10px',
-    position: 'relative',
-    overflow: 'hidden',
-    '&:hover .details': {
-      opacity: 1, 
-      color: 'white', 
-    },
-    '&:hover .title': {
-      opacity: 0,
-    },
-    '&:hover': {
-      backgroundColor: 'black', 
-    },
-  }}
->
-  {/* Conditionally render the star icon if the item is premium */}
-  {item.isPremium && (
-    <StarIcon
-      sx={{
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
-        color: 'white', 
-        fontSize: '24px', 
-      }}
-    />
-  )}
-  
-  {/* Conditionally render the maintenance icon if the item is under maintenance */}
-  {item.isUnderMaintenance && (
-    <PriorityHighIcon
-      sx={{
-        position: 'absolute',
-        top: '10px',
-        left: '10px',
-        color: 'white', 
-        fontSize: '24px', 
-      }}
-    />
-  )}
+                        <Card
+                        sx={{
+                            border: '0px solid black',
+                            backgroundColor: theme.palette.primary.main,
+                            width: '199px',
+                            height: '199px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: '10px',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            '&:hover .details': {
+                            opacity: 1, 
+                            color: 'white', 
+                            },
+                            '&:hover .title': {
+                            opacity: 0,
+                            },
+                            '&:hover': {
+                            backgroundColor: 'black', 
+                            },
+                        }}
+                        >
+                        {/* Conditionally render the star icon if the item is premium */}
+                        {item.isPremium && (
+                            <StarIcon
+                            sx={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '10px',
+                                color: 'white', 
+                                fontSize: '24px', 
+                            }}
+                            />
+                        )}
+                        
+                        {/* Conditionally render the maintenance icon if the item is under maintenance */}
+                        {item.isUnderMaintenance && (
+                            <PriorityHighIcon
+                            sx={{
+                                position: 'absolute',
+                                top: '10px',
+                                left: '10px',
+                                color: 'white', 
+                                fontSize: '24px', 
+                            }}
+                            />
+                        )}
 
-<CardContent sx={{ textAlign: 'center', position: 'relative' }}>
-  <Typography
-    className="title" 
-    variant="body2"
-    sx={{
-      color: theme.palette.primary.contrastText,
-      fontWeight: 'bold',
-      fontSize: '12pt',
-      padding: '5px',
-      transition: 'opacity 0.3s ease', 
-    }}
-  >
-    {item.name}
-  </Typography>
-  <Box
-    className="details"
-    sx={{
-      opacity: 0, 
-      transition: 'opacity 0.3s ease',
-      position: 'absolute',
+                        <CardContent sx={{ textAlign: 'center', position: 'relative' }}>
+                        <Typography
+                            className="title" 
+                            variant="body2"
+                            sx={{
+                            color: theme.palette.primary.contrastText,
+                            fontWeight: 'bold',
+                            fontSize: '12pt',
+                            padding: '5px',
+                            transition: 'opacity 0.3s ease', 
+                            }}
+                        >
+                            {item.name}
+                        </Typography>
+                        <Box
+                            className="details"
+                            sx={{
+                            opacity: 0, 
+                            transition: 'opacity 0.3s ease',
+                            position: 'absolute',
 
-      top: '50%', 
-      left: '50%',
-      transform: 'translate(-50%, -50%)', 
-      color: theme.palette.primary.contrastText,
-      textAlign: 'center', 
-    }}
-  >
-    <Typography variant="body2">{item.description}</Typography>
-    <Typography variant="body2">
-      Status: {item.isUnderMaintenance ? 'Under Maintenance' : 'Available'}
-    </Typography>
-    <Typography variant="body2">
-      {item.isPremium ? 'Premium Equipment' : 'Standard Equipment'}
-    </Typography>
-    {item.isBookable && !item.isUnderMaintenance && (
-      <Button variant="contained" onClick={handleOpen}>
-        Book
-      </Button>
-    )}
-  </Box>
-</CardContent>
-</Card>
+                            top: '50%', 
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)', 
+                            color: theme.palette.primary.contrastText,
+                            textAlign: 'center', 
+                            }}
+                        >
+                            <Typography variant="body2">{item.description}</Typography>
+                            <Typography variant="body2">
+                            Status: {item.isUnderMaintenance ? 'Under Maintenance' : 'Available'}
+                            </Typography>
+                            <Typography variant="body2">
+                            {item.isPremium ? 'Premium Equipment' : 'Standard Equipment'}
+                            </Typography>
+                            {item.isBookable && !item.isUnderMaintenance && (
+                            <Button variant="contained" onClick={handleOpen}>
+                                Book
+                            </Button>
+                            )}
+                        </Box>
+                        </CardContent>
+                        </Card>
 
                     </Grid2>
                   ))}
