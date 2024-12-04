@@ -17,7 +17,7 @@ interface MaintenanceDialogProps {
 
 const MaintenanceDialog: React.FC<MaintenanceDialogProps> = ({ open, onClose, title }) => {
     return (
-        <Dialog open={open} onClose={onClose} sx={{ '& .MuiDialog-paper': { width: '701px', borderRadius: '8px', top: '-20%', padding: '20px' } }}>
+        <Dialog open={open} onClose={onClose} sx={{ '& .MuiDialog-paper': { width: '701px', borderRadius: '8px',  padding: '20px' } }}>
             <DialogTitle>Maintenance Set Successfully</DialogTitle>
             <DialogContent>
                 <Typography>
