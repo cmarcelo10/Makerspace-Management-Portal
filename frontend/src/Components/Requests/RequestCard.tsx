@@ -1,4 +1,3 @@
-// src/components/RequestCard.tsx
 import React, { useState } from 'react';
 import {
     Button,
@@ -13,7 +12,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/CloudDownload';
 import EventIcon from '@mui/icons-material/Event';
 import EditIcon from '@mui/icons-material/Edit';
-import RejectDialog from './RejectDialog'; // Import RejectDialog
+import RejectDialog from './RejectDialog'; 
+import CancelReservationDialog from './CancelReservationDialog'; 
 
 interface RequestCardProps {
     status?: 'approved' | 'pending' | 'rejected' | string;
@@ -35,11 +35,18 @@ const RequestCard: React.FC<RequestCardProps> = ({
     user,
 }) => {
     const [openRejectDialog, setOpenRejectDialog] = useState(false);
+    const [openCancelDialog, setOpenCancelDialog] = useState(false); 
 
     const handleReject = () => {
-        // Handle the rejection logic here (e.g., update the request status)
+        //backend
         console.log('Request rejected:', title);
         setOpenRejectDialog(false);
+    };
+
+    const handleCancelReservation = () => {
+            //backend
+        console.log('Reservation cancelled:', title);
+        setOpenCancelDialog(false); 
     };
 
     return (
@@ -130,7 +137,10 @@ const RequestCard: React.FC<RequestCardProps> = ({
                                     flexDirection: 'column',
                                 }}
                             >
-                                <IconButton className="card-delete">
+                                <IconButton
+                                    className="card-delete"
+                                    onClick={() => setOpenCancelDialog(true)} // Open cancel dialog on click
+                                >
                                     <DeleteIcon />
                                 </IconButton>
                                 {status === 'pending' && (
@@ -187,6 +197,13 @@ const RequestCard: React.FC<RequestCardProps> = ({
                 open={openRejectDialog}
                 onClose={() => setOpenRejectDialog(false)}
                 onReject={handleReject}
+            />
+
+            {/* CancelReservationDialog component */}
+            <CancelReservationDialog
+                open={openCancelDialog}
+                onClose={() => setOpenCancelDialog(false)}
+                onCancel={handleCancelReservation}
             />
         </Card>
     );
