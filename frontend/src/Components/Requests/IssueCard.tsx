@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import MaintenanceDialog from './MaintenanceDialog';
 import {
     Button,
     Card,
     CardContent,
     Typography,
-    IconButton,
     Box,
     Grid2,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DownloadIcon from '@mui/icons-material/CloudDownload';
 import EventIcon from '@mui/icons-material/Event';
-import EditIcon from '@mui/icons-material/Edit';
 
 interface IssueCardProps {
     title: string | undefined;
@@ -22,16 +23,26 @@ interface IssueCardProps {
     status: number;
 }
 
-const IssueCard: React.FC<IssueCardProps> = ({
-    title,
-    description,
-    date,
-    icon,
-    isResolved,
-}) => {
+const IssueCard: React.FC<IssueCardProps> = ({ title, description, date, icon, isResolved }) => {
     const IconStyle: React.CSSProperties = {
         width: '100px',
         height: '100px',
+    };
+
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleSetOutOfOrder = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+
+    const handleConfirmOutOfOrder = () => {
+        // Backend logic for setting the issue as Out-Of-Order
+        console.log('Issue set to Out-Of-Order');
+        setOpenDialog(false);
     };
 
     return (
@@ -96,17 +107,11 @@ const IssueCard: React.FC<IssueCardProps> = ({
                                 />{' '}
                                 {date}
                             </Typography>
-                            <Box
-                                className="download-link"
-                                sx={{
-                                    flex: '1',
-                                }}
-                            ></Box>
                         </Box>
                     </Grid2>
                 </Grid2>
 
-                {isResolved == false ? (
+                {isResolved === false ? (
                     <Grid2 container>
                         <Grid2 size="grow"></Grid2>
                         <Grid2>
@@ -121,6 +126,7 @@ const IssueCard: React.FC<IssueCardProps> = ({
                                     paddingRight: '30px',
                                     fontWeight: 'bold',
                                 }}
+                                onClick={handleSetOutOfOrder}
                             >
                                 Set Out-Of-Order
                             </Button>
@@ -150,6 +156,13 @@ const IssueCard: React.FC<IssueCardProps> = ({
                     </Grid2>
                 )}
             </CardContent>
+
+            {/* MaintenanceDialog is used here */}
+            <MaintenanceDialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                title={title}
+            />
         </Card>
     );
 };

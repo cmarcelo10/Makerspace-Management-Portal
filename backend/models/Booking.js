@@ -38,6 +38,9 @@ const Booking = sequelize.define(
             type: DataTypes.TIME,
             allowNull: false,
         },
+        timeSlot2: {
+            type: DataTypes.TIME,
+        },
         status: {
             type: DataTypes.STRING(10),
             defaultValue: STATUS_PENDING,
@@ -82,11 +85,9 @@ Booking.allTimeSlots = [
     '18:00:00',
     '19:00:00',
 ];
+// CHANGE MAX DAYS IN ADVANCE
 Booking.premiumUserMaxDaysInFuture = 28;
 Booking.basicUserMaxDaysInFuture = 14;
-
-Booking.premiumUserMaxPerWeek = 2;
-Booking.basicUserMaxPerWeek = 1;
 
 // force the status to 'pending' during creation, users shouldn't try anything funny
 Booking.beforeCreate((booking, options) => {
@@ -97,7 +98,7 @@ Booking.beforeCreate((booking, options) => {
 Booking.addHook('beforeValidate', async (booking) => {
     const User = sequelize.models.User;
     const Equipment = sequelize.models.Equipment;
-
+    console.log(booking.equipmentID);
     const user = await User.findByPk(booking.userEmail);
     const equipment = await Equipment.findByPk(booking.equipmentID);
 
@@ -116,46 +117,35 @@ Booking.addHook('beforeValidate', async (booking) => {
         throw new Error('Only premium users can book premium equipment.');
     }
 
-    // 3. Ensure no conflicting booking
+    // 3. Validate Time Slot Requirements
+    if (user.userRole !== User.PREMIUM && booking.timeSlot2) {
+        throw new Error('Basic users can only book one time slot.');
+    }
+
+    // 4. Ensure No Conflicting Booking
+    const conflictConditions = [
+        { timeSlot1: booking.timeSlot1 },
+        { timeSlot2: booking.timeSlot1 },
+    ];
+
+    if (booking.timeSlot2) {
+        conflictConditions.push(
+            { timeSlot1: booking.timeSlot2 },
+            { timeSlot2: booking.timeSlot2 }
+        );
+    }
+
     const conflict = await Booking.findOne({
         where: {
             equipmentID: booking.equipmentID,
             bookingDate: booking.bookingDate,
-            timeSlot1: booking.timeSlot1,
-            [Op.or]: [
-                { status: Booking.STATUS_PENDING },
-                { status: Booking.STATUS_APPROVED },
-            ],
+            [Op.or]: conflictConditions,
         },
     });
 
     if (conflict) {
         throw new Error(
             'A booking already exists for this equipment on the specified date and time slot.'
-        );
-    }
-
-    // 4. Only one booking per week (basic) or two bookings per week (premium)
-    const startOfWeek = new Date(booking.bookingDate);
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Sunday
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday
-
-    const userBookings = await Booking.findAll({
-        where: {
-            userEmail: booking.userEmail,
-            bookingDate: { [Op.between]: [startOfWeek, endOfWeek] },
-            status: { [Op.not]: STATUS_DENIED },
-        },
-    });
-
-    const maxWeeklyBookings =
-        user.userRole === User.PREMIUM
-            ? Booking.premiumUserMaxPerWeek
-            : Booking.basicUserMaxPerWeek;
-    if (userBookings.length >= maxWeeklyBookings) {
-        throw new Error(
-            `You can only have ${maxWeeklyBookings} booking(s) per week for your user role.`
         );
     }
 
@@ -190,6 +180,9 @@ Booking.addHook('beforeValidate', async (booking) => {
     if (!isOnHourMark(booking.timeSlot1)) {
         throw new Error('timeSlot1 must be on the hour (e.g., 7:00, 8:00).');
     }
+    if (booking.timeSlot2 && !isOnHourMark(booking.timeSlot2)) {
+        throw new Error('timeSlot2 must be on the hour (e.g., 7:00, 8:00).');
+    }
 
     // Define allowed time range
     const earliestTime = '08:00:00';
@@ -197,6 +190,16 @@ Booking.addHook('beforeValidate', async (booking) => {
 
     if (booking.timeSlot1 < earliestTime || booking.timeSlot1 > latestTime) {
         throw new Error('timeSlot1 must be between 08:00 AM and 07:00 PM.');
+    }
+    if (
+        booking.timeSlot2 &&
+        (booking.timeSlot2 < earliestTime || booking.timeSlot2 > latestTime)
+    ) {
+        throw new Error('timeSlot2 must be between 08:00 AM and 07:00 PM.');
+    }
+
+    if (booking.timeSlot2 && booking.timeSlot1 >= booking.timeSlot2) {
+        throw new Error('timeSlot1 must be earlier than timeSlot2.');
     }
 });
 

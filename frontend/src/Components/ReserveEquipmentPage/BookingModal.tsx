@@ -255,6 +255,20 @@ const BookingCalendar = ({ userRole, onClose, externalProps }: BookingCalendarPr
                                     </Button>
                                 </Box>
                             </Box>
+                            <Box component="form" sx={{paddingTop: 3}}>
+                                <TextField id="DescriptionField" label="Details" minRows={2} sx={
+                                    {fontSize: 10,
+                                        '& .MuiInputBase-root':
+                                        {
+                                            fontSize: 14,
+                                        }
+                                    }
+                                    } maxRows={2}  variant="filled" onChange={handleDetailsUpdate} multiline fullWidth required>
+                                </TextField>
+                            </Box>                            
+                            <Button variant="contained" sx={{marginTop: 3, backgroundColor: '#65558F', color:"#FFFFFF", width:'120px'}} onClick={submitBooking} disabled={(inputText === "" || selectedTime === "")}>
+                                Submit
+                            </Button>
                         </Box>
                     </Box>
 
@@ -271,7 +285,9 @@ const BookingCalendar = ({ userRole, onClose, externalProps }: BookingCalendarPr
                         onSubmit={handleSubmitReport}
                     />
                 </Box>
+                </Box>
             </LocalizationProvider>
+         </ModalBase>
         </ThemeProvider>
     );
 };

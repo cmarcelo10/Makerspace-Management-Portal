@@ -204,15 +204,14 @@ const checkout = errorsController.catchAsync(
                         // stripe wants this for the stripe dashboard, not really necessary for us
                         product_data: {
                             name: `Premium Membership for ${request.body.user.email}!`,
-                            description: `This membership allows you to book equipment twice per week, and up to four weeks in advance rather than two. It also gives you access to special premium equipment! Take your work to the next level!`,
+                            description: `This membership allows you to book equipment for 2 hours instead of 1, and gives you access to special premium equipment! Take your work to the next level!`,
                             images: ['https://i.imgur.com/pLscibH.png'],
                         },
                     },
                 },
             ],
             // Stripe redirects to this URL, and we upgrade the user's status when they're redirected to this URL
-            success_url: `${request.protocol}://${request.get('host')}/users/checkout/${process.env.STRIPE_SECRET_KEY}`,
-            cancel_url: 'http://localhost:5173/reserve',
+            success_url: `${request.protocol}://${request.get('host')}/checkout/${process.env.STRIPE_SECRET_KEY}`,
         });
 
         response.status(200).json({
@@ -243,16 +242,13 @@ const setUserPremium = errorsController.catchAsync(
         user.userRole = User.PREMIUM;
         await user.save();
 
-        // redirect the user to the frontend dashboard route. Use a query param so that the frontend
-        // can do any "post-checkout" behaviour that it desires
-        const dashboardUrl = 'http://localhost:5173/reserve?checkout=success';
-        response.redirect(dashboardUrl);
+        response.status(200).json({
+            status: 'success',
+            message: `Congratulations ${request.body.user.email}, you are now a premium user!`,
+        });
     }
 );
 
-/*
-  Used in the settings page on the frontend.
-*/
 const updateUserProfile = errorsController.catchAsync(
     async (request, response) => {
         const updatedUser = await User.findByPk(request.body.email);
@@ -285,31 +281,6 @@ const updateUserProfile = errorsController.catchAsync(
     }
 );
 
-/*
-  Used when the user is upgraded to premium and the frontend needs to refetch.
-*/
-const getUserProfile = errorsController.catchAsync(
-    async (request, response) => {
-        const user = await User.findByPk(request.body.user.email);
-
-        if (!user) {
-            throw new errorsController.ErrorWithStatusCode(
-                'User not found.',
-                404
-            );
-        }
-
-        const token = _getAuthenticatedToken(user);
-        const cookie = _getAuthenticatedCookie();
-        response.cookie('jwt', token, cookie);
-        response.status(201).json({
-            status: 'success',
-            token,
-            user,
-        });
-    }
-);
-
 module.exports = {
     signup,
     login,
@@ -318,5 +289,4 @@ module.exports = {
     checkout,
     setUserPremium,
     updateUserProfile,
-    getUserProfile,
 };

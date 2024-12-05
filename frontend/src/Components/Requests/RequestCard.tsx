@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Button,
     Card,
@@ -12,6 +12,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/CloudDownload';
 import EventIcon from '@mui/icons-material/Event';
 import EditIcon from '@mui/icons-material/Edit';
+import RejectDialog from './RejectDialog'; 
+import CancelReservationDialog from './CancelReservationDialog'; 
 
 interface RequestCardProps {
     status?: 'approved' | 'pending' | 'rejected' | string;
@@ -30,9 +32,19 @@ const RequestCard: React.FC<RequestCardProps> = ({
     icon,
     user,
 }) => {
-    const IconStyle: React.CSSProperties = {
-        width: '100px',
-        height: '100px',
+    const [openRejectDialog, setOpenRejectDialog] = useState(false);
+    const [openCancelDialog, setOpenCancelDialog] = useState(false); 
+
+    const handleReject = () => {
+        //backend
+        console.log('Request rejected:', title);
+        setOpenRejectDialog(false);
+    };
+
+    const handleCancelReservation = () => {
+            //backend
+        console.log('Reservation cancelled:', title);
+        setOpenCancelDialog(false); 
     };
 
     return (
@@ -50,15 +62,13 @@ const RequestCard: React.FC<RequestCardProps> = ({
             <CardContent>
                 <Grid2 container spacing={4}>
                     <Grid2 size="auto">
-                        <img src={icon} style={IconStyle} alt={icon}></img>
+                        <img src={icon} style={{ width: '100px', height: '100px' }} alt={icon}></img>
                     </Grid2>
                     <Grid2 size="grow">
                         <Typography
                             variant="h6"
                             className="card-title"
-                            sx={{
-                                fontWeight: 'bolder',
-                            }}
+                            sx={{ fontWeight: 'bolder' }}
                         >
                             {title}
                         </Typography>
@@ -108,7 +118,10 @@ const RequestCard: React.FC<RequestCardProps> = ({
                                     flexDirection: 'column',
                                 }}
                             >
-                                <IconButton className="card-delete">
+                                <IconButton
+                                    className="card-delete"
+                                    onClick={() => setOpenCancelDialog(true)} // Open cancel dialog on click
+                                >
                                     <DeleteIcon />
                                 </IconButton>
                                 {status === 'pending' && (
@@ -126,6 +139,7 @@ const RequestCard: React.FC<RequestCardProps> = ({
                         <Grid2 size="grow"></Grid2>
                         <Grid2>
                             <Button
+                                onClick={() => setOpenRejectDialog(true)} // Open RejectDialog on click
                                 sx={{
                                     backgroundColor: 'white',
                                     color: 'black',
@@ -158,6 +172,20 @@ const RequestCard: React.FC<RequestCardProps> = ({
                     </Grid2>
                 )}
             </CardContent>
+            
+            {/* RejectDialog component */}
+            <RejectDialog
+                open={openRejectDialog}
+                onClose={() => setOpenRejectDialog(false)}
+                onReject={handleReject}
+            />
+
+            {/* CancelReservationDialog component */}
+            <CancelReservationDialog
+                open={openCancelDialog}
+                onClose={() => setOpenCancelDialog(false)}
+                onCancel={handleCancelReservation}
+            />
         </Card>
     );
 };
