@@ -5,11 +5,11 @@ Note that this is not a comprehensive guide and you will likely encounter issues
 
 - Navigate to the directory you want to store the project files in and clone the repository by running:
   ```
-  git clone https://csgit.ucalgary.ca/carter.marcelo/seng513-fall24-group-16.git
+  git clone https://github.com/cmarcelo10/Makerspace-Management-Portal
   ```
 - Go to the project root:
   ```
-  cd seng513-fall24-group-16
+  cd Makerspace-Management-Portal
   ```
 - Confirm you are on the production branch by running:
   ```
