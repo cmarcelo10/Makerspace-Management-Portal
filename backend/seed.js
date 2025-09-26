@@ -4,7 +4,6 @@
  * then add a new conditional in the seedDatabase arrow function under
  * the 'Add test data to tables' comment.
  */
-
 const sequelize = require('./config/database');
 const fs = require('fs');
 const path = require('path');
@@ -81,7 +80,7 @@ const generatePremiumBookings = (
 };
 // Sync the database and seed data
 // Set the clear = true to erase existing data from your database
-const seedDatabase = async (clear = false) => {
+const seedDatabase = async (clear = true) => {
     try {
         if (clear) {
             // Clear existing data
