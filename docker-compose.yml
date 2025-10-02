@@ -12,7 +12,9 @@ services:
   backend:
     build:
       context: ./backend
+    env_file:
+      - backend/config.env
     ports:
-      - '5001:8080' # Host-Port:Container-Port
+      - '8080:8080' # Host-Port:Container-Port
     volumes:
       - ./backend/database.db:/app/database.db

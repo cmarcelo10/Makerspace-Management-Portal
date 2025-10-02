@@ -6,3 +6,4 @@ build
 # the database gets mounted as a volume, no need to copy it.
 config/database.db 
 .gitignore
+config.env
