@@ -50,14 +50,14 @@ const generatePremiumBookings = (
     equipmentIDs.forEach((id) => {
         let baseDay = new Date(startDay);
         for (i = 0; i < noDays; ++i) {
-            console.log('Start date: %s', baseDay.toLocaleString());
+            // console.log('Start date: %s', baseDay.toLocaleString());
             let bookingHour = initalBookingHour;
             premiumUsers.forEach((email) => {
-                console.log(
+                /* console.log(
                     'Booking hours: %d:00:00, %d:00:00',
                     bookingHour,
                     bookingHour + 1
-                );
+                );*/
                 bookings.push({
                     userEmail: email,
                     equipmentID: id,
@@ -75,7 +75,6 @@ const generatePremiumBookings = (
     console.log(
         `Expected ${equipmentIDs.length * noDays * premiumUsers.length} bookings, got ${bookings.length} bookings`
     );
-    bookings.forEach((b) => printBookingRecord(b));
     return bookings;
 };
 // Sync the database and seed data
@@ -387,7 +386,8 @@ const seedDatabase = async (clear = true) => {
                         isPremium: true,
                     },
                 ],
-                { individualHooks: true }
+                { individualHooks: true },
+                { logging: false }
             );
             console.log('Seeded equipment table');
         }
@@ -428,30 +428,33 @@ const seedDatabase = async (clear = true) => {
             ); // 14 days worth of seeding
             // starting at 8 for the first user
             // offset the first booking by 3 days
-            await Booking.bulkCreate([
-                {
-                    userEmail: 'connor@gmail.com', // Relates to Connor McDavid
-                    equipmentID: 0, // Relates to the 3D Printer
-                    bookingDate: new Date(),
-                    timeSlot1: '12:00:00',
-                    title: 'Need the 3D Printer',
-                    description:
-                        'I want to use the 3D printer to print out a ring for my wife Lauren.',
-                },
-                {
-                    userEmail: 'connor@gmail.com', // Relates to Connor McDavid
-                    equipmentID: 0, // Relates to the 3D Printer
-                    bookingDate: new Date(
-                        new Date().setDate(new Date().getDate() + 1)
-                    ), // tomorrow
-                    timeSlot1: '14:00:00',
-                    title: 'Need the 3D Printer AGAIN',
-                    description:
-                        'I want to use the 3D printer to print out a necklace for my wife Lauren.',
-                    status: Booking.STATUS_APPROVED,
-                },
-                ...premiumBookings,
-            ]),
+            await Booking.bulkCreate(
+                [
+                    {
+                        userEmail: 'connor@gmail.com', // Relates to Connor McDavid
+                        equipmentID: 0, // Relates to the 3D Printer
+                        bookingDate: new Date(),
+                        timeSlot1: '12:00:00',
+                        title: 'Need the 3D Printer',
+                        description:
+                            'I want to use the 3D printer to print out a ring for my wife Lauren.',
+                    },
+                    {
+                        userEmail: 'connor@gmail.com', // Relates to Connor McDavid
+                        equipmentID: 0, // Relates to the 3D Printer
+                        bookingDate: new Date(
+                            new Date().setDate(new Date().getDate() + 1)
+                        ), // tomorrow
+                        timeSlot1: '14:00:00',
+                        title: 'Need the 3D Printer AGAIN',
+                        description:
+                            'I want to use the 3D printer to print out a necklace for my wife Lauren.',
+                        status: Booking.STATUS_APPROVED,
+                    },
+                    ...premiumBookings,
+                ],
+                { logging: false }
+            ),
                 console.log('Seeded booking table');
         }
 
@@ -482,30 +485,33 @@ const seedDatabase = async (clear = true) => {
         // Attachments (with relationships to Requests by ID)
         const attachmentCount = await Attachment.count();
         if (attachmentCount === 0) {
-            await Attachment.bulkCreate([
-                {
-                    id: 1,
-                    requestID: 1, // Relates to the first request
-                    file: fs.readFileSync(
-                        path.join(
-                            __dirname,
-                            '/assets/attachments',
-                            '3d_printer_manual.pdf'
-                        )
-                    ),
-                },
-                {
-                    id: 2,
-                    requestID: 2, // Relates to the second request
-                    file: fs.readFileSync(
-                        path.join(
-                            __dirname,
-                            '/assets/attachments',
-                            'stapler.jpg'
-                        )
-                    ),
-                },
-            ]);
+            await Attachment.bulkCreate(
+                [
+                    {
+                        id: 1,
+                        requestID: 1, // Relates to the first request
+                        file: fs.readFileSync(
+                            path.join(
+                                __dirname,
+                                '/assets/attachments',
+                                '3d_printer_manual.pdf'
+                            )
+                        ),
+                    },
+                    {
+                        id: 2,
+                        requestID: 2, // Relates to the second request
+                        file: fs.readFileSync(
+                            path.join(
+                                __dirname,
+                                '/assets/attachments',
+                                'stapler.jpg'
+                            )
+                        ),
+                    },
+                ],
+                { logging: false }
+            );
             console.log('Seeded attachment table');
         }
     } catch (error) {
