@@ -42,11 +42,11 @@ const User = sequelize.define(
         password: {
             // fixed-length 64-byte or 256-bit hash, using SHA256 algo
             // could add salts later, but probably overkill for a demo project
-            type: DataTypes.CHAR(64), // 256-bit binary string
+            type: DataTypes.STRING(100), // 256-bit binary string
             allowNull: false,
         },
         confirmPassword: {
-            type: DataTypes.CHAR(64),
+            type: DataTypes.STRING(100),
             validate: {
                 matchesPassword(value) {
                     if (value !== this.password) {
