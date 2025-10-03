@@ -12,6 +12,7 @@ RUN npm run build
 
 FROM nginx:alpine
 
+# serves the static frontend files on nginx
 COPY --from=build /frontend/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 

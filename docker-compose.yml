@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - '8800:80' # Host-Port:Container-Port
-    depends_on:
-      - backend
-
+  ## no longer needed: frontend will be hosted separately
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - '5173:80' # Host-Port:Container-Port
+  #   depends_on:
+  #     - backend
   backend:
     build:
       context: ./backend
@@ -16,5 +16,3 @@ services:
       - backend/config.env
     ports:
       - '8080:8080' # Host-Port:Container-Port
-    volumes:
-      - ./backend/database.db:/app/database.db
