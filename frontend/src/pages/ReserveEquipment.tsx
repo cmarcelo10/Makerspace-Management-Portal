@@ -158,12 +158,9 @@ function userCanBookItem(item: Equipment, userRole: string | undefined) {
     }
 }
 
-
-
 function timeout(delay: number) {
     return new Promise((res) => setTimeout(res, delay));
 }
-
 
 const ReserveEquipment = () => {
     const { user } = useAuth();

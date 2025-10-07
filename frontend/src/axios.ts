@@ -7,10 +7,9 @@ import Cookies from 'js-cookie';
 
 // The frontend will use its own port unless we manually intercept it and redirect it to the backend.
 const axiosInstance = axios.create({
-    baseURL: `http://localhost:8080`,
+    baseURL: `http://35.93.214.147:8080`,
+    withCredentials: true,
 }) as AxiosInstance & typeof axios;
-
-axiosInstance.defaults.withCredentials = true;
 
 // add an interceptor to include the Authorization header in all requests, that way frontend doesn't have to repeat the same code
 // over and over for every request

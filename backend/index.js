@@ -43,8 +43,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 // force usage of https in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(utilsController.redirectUsingHTTPS);
+    // Disabling because HTTPS is overkill for a demo project
+    // app.use(utilsController.redirectUsingHTTPS);
 }
+
 app.use(cors(corsOptions));
 app.use(express.json()); // lets us have JSON bodies in our requests
 app.use(cookieParser()); // lets us parse cookies from our requests

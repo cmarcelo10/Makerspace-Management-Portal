@@ -27,7 +27,7 @@ function _getAuthenticatedToken(user) {
     return token;
 }
 
-function _getAuthenticatedCookie() {
+function _getAuthenticatedCookie(request) {
     // we send the token back "explicitly" in the response body, but also as a cookie.
     // sending it as a cookie ensures the frontend sends it with
     // requests automatically. If it wasn't a cookie, the frontend would have to manually do
@@ -37,9 +37,9 @@ function _getAuthenticatedCookie() {
             Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
         ),
         // https://expressjs.com/en/advanced/best-practice-security.html#:~:text=%7D))-,Set%20cookie%20security%20options,-Set%20the%20following
-        secure:
-            process.env.NODE_ENV === 'production' &&
-            (request.secure || request.get('x-forwarded-proto') === 'https'),
+        secure: false,
+        /*process.env.NODE_ENV === 'production' &&
+            (request.secure || request.get('x-forwarded-proto') === 'https'),*/
         httpOnly: true,
     };
 
@@ -62,7 +62,7 @@ const signup = errorsController.catchAsync(async (request, response) => {
     newUser.password = undefined;
 
     const token = _getAuthenticatedToken(newUser);
-    const cookie = _getAuthenticatedCookie();
+    const cookie = _getAuthenticatedCookie(request);
     // https://stackoverflow.com/a/48231372
     response.cookie('jwt', token, cookie);
     response.status(201).json({
@@ -103,7 +103,7 @@ const login = errorsController.catchAsync(async (request, response) => {
     // we don't need to send the password back (the token is all the user needs). Since it's sensitive, hide it.
     user.password = undefined;
     const token = _getAuthenticatedToken(user);
-    const cookie = _getAuthenticatedCookie();
+    const cookie = _getAuthenticatedCookie(request);
     response.cookie('jwt', token, cookie);
     response.status(200).json({
         status: 'success',
@@ -116,7 +116,7 @@ const isUserLoggedIn = errorsController.catchAsync(
     async (request, response, next) => {
         // 1) check if the JWT token was sent with the request. Either sent as header "Bearer: Token" or by browser as a cookie
         let token;
-
+        console.log(request.cookies.jwt);
         if (
             request.headers.authorization &&
             request.headers.authorization.startsWith('Bearer') &&
@@ -275,7 +275,7 @@ const updateUserProfile = errorsController.catchAsync(
         await updatedUser.save();
 
         const token = _getAuthenticatedToken(updatedUser);
-        const cookie = _getAuthenticatedCookie();
+        const cookie = _getAuthenticatedCookie(request);
         response.cookie('jwt', token, cookie);
         response.status(201).json({
             status: 'success',
@@ -300,7 +300,7 @@ const getUserProfile = errorsController.catchAsync(
         }
 
         const token = _getAuthenticatedToken(user);
-        const cookie = _getAuthenticatedCookie();
+        const cookie = _getAuthenticatedCookie(request);
         response.cookie('jwt', token, cookie);
         response.status(201).json({
             status: 'success',
